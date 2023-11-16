@@ -18,53 +18,9 @@
     box-sizing: border-box;
 }
 
-#palette {
-    margin-top: 1em;
-    height: 3em;
-    width: 100%;
-    text-align: center;
-}
-
-#palette > div {
-    width: 3em;
-    height: 3em;
-}
-
 #indicator {
     border: 1px solid gray;
     margin-top: 1em;
     border-radius: 1em;
     padding: 1em;
-}
-
-div.red {
-    background: red;
-}
-div.orange {
-    background: orange;
-}
-div.yellow {
-    background: yellow;
-}
-div.green {
-    background: green;
-    color: white;
-}
-div.blue {
-    background: blue;
-    color: white;
-}
-div.purple {
-    background: purple;
-    color: white;
-}
-div.white {
-    background: white;
-}
-div.gray {
-    background: gray;
-}
-div.black {
-    background: black;
-    color: white;
 }
