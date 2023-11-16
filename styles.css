@@ -30,6 +30,13 @@
     height: 3em;
 }
 
+#indicator {
+    border: 1px solid gray;
+    margin-top: 1em;
+    border-radius: 1em;
+    padding: 1em;
+}
+
 div.red {
     background: red;
 }
@@ -41,12 +48,15 @@ div.yellow {
 }
 div.green {
     background: green;
+    color: white;
 }
 div.blue {
     background: blue;
+    color: white;
 }
 div.purple {
     background: purple;
+    color: white;
 }
 div.white {
     background: white;
@@ -56,4 +66,5 @@ div.gray {
 }
 div.black {
     background: black;
+    color: white;
 }

@@ -32,6 +32,9 @@ window.onload = function() {
     for (const color of document.querySelectorAll('#palette > div')) {
         color.addEventListener('click', function() {
             lastColor = this.className;
+            const indicator = document.getElementById('indicator');
+            indicator.className = lastColor;
+            indicator.textContent = lastColor;
         });
     }
 }
