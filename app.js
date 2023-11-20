@@ -1,4 +1,4 @@
-const SIDE = 50;
+const SIDE = 70;
 const SQUARE = SIDE * SIDE;
 
 const storage = {
@@ -90,25 +90,13 @@ window.onload = function onload() {
         storage.lastColor.set(lastColor);
     });
 
-    const drawElement = document.getElementById('tool-draw');
-    const fillElement = document.getElementById('tool-fill');
-
     // initialize radio buttons
-    if (tool === 'draw') {
-        drawElement.checked = true;
-    } else if (tool === 'fill') {
-        fillElement.checked = true;
+    if (tool === 'draw' || tool === 'fill') {
+        document.getElementById(`tool-${tool}`).checked = true;
     }
-    // FIXME unite in one event listener
-    drawElement.addEventListener('change', function(e) {
+    document.getElementById('tool').addEventListener('change', function(e) {
         if (e.target.checked) {
-            tool = 'draw';
-            storage.tool.set(tool);
-        }
-    });
-    fillElement.addEventListener('change', function(e) {
-        if (e.target.checked) {
-            tool = 'fill';
+            tool = e.target.id.replace('tool-','');
             storage.tool.set(tool);
         }
     });
@@ -219,13 +207,14 @@ function adjacentBlocks(point) {
 
 // Should be able to store (0, size]
 function IntSet(size) {
-    const INTSIZE = 30; // bit length of integer
+    const INTSIZE = 31; // bit length of integer
     const makeMask = function makeMask(x) {
         return 2 ** (x % INTSIZE);
     };
     const makeEntry = function makeEntry(x) {
         return Math.floor(x / INTSIZE);
     };
+
     this.size = size;
     this.entries = Array(Math.ceil(size / INTSIZE)).fill(0);
     this.add = function addIntSet(x) {
@@ -287,11 +276,14 @@ function IntSet(size) {
     };
     this.toArray = function toArrayIntSet() {
         let result = [];
-        for (let i = 0; i < this.size; i++) {
-            if (this.contains(i)) {
-                result.push(i);
+        this.entries.forEach(function(entry, entryIndex) {
+            for (let i = 0; entry !== 0; i++) {
+                if (entry & 1 === 1) {
+                    result.push(i + (entryIndex * INTSIZE));
+                }
+                entry = entry >> 1;
             }
-        }
+        });
         return result;
     };
     this.isEmpty = function isEmptyIntSet() {
