@@ -200,17 +200,17 @@ function adjacentBlocks(point) {
     const j = point.y;
 
     const is = [];
-    if (i-1 !== 0) {
+    if (i-1 >= 0) {
         is.push(i-1);
     }
-    if (i+1 !== SIDE) {
+    if (i+1 < SIDE) {
         is.push(i+1);
     }
     const js = [];
-    if (j-1 !== 0) {
+    if (j-1 >= 0) {
         js.push(j-1);
     }
-    if (j+1 !== SIDE) {
+    if (j+1 < SIDE) {
         js.push(j+1);
     }
 
