@@ -12,10 +12,11 @@
     line-height: 0;
 }
 
-#canvas > div, #palette > div {
+#canvas > div {
     border: 1px solid gray;
     display: inline-block;
     box-sizing: border-box;
+    transition: background .4s;
 }
 
 #indicator {

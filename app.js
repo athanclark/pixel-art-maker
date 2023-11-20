@@ -1,4 +1,4 @@
-const SIDE = 50;
+const SIDE = 20;
 const SQUARE = SIDE * SIDE;
 
 const storage = {
@@ -45,6 +45,7 @@ const getBlock = function getBlock(point) {
     return blocks[coordsToInline(point)];
 };
 
+// {x, y} -> ()
 const setBlock = function setBlock(point, x) {
     blocks[coordsToInline(point)] = x;
 };
@@ -56,25 +57,44 @@ function getSameAdjacentBlocks(point) {
 }
 
 // {x, y} -> IntSet
-const getSameSurroundingBlocks = function getSameSurroundingBlocks(point) {
+const getSameSurroundingBlocks = function getSameSurroundingBlocks(
+    onEachIteration,
+    onCompleteIteration,
+    time,
+    point,
+    color
+) {
     let completeSet = new IntSet(SQUARE);
     completeSet.add(coordsToInline(point));
 
     let adjacentSet = new IntSet(SQUARE);
     adjacentSet.add(coordsToInline(point));
-    do {
-        let tmpAdjacentSet = new IntSet(SQUARE);
-        for (const nextPoint of adjacentSet.toArray()) {
-            for (const adjacentToNextPoint of getSameAdjacentBlocks(inlineToCoords(nextPoint))) {
-                tmpAdjacentSet.add(coordsToInline(adjacentToNextPoint));
-            }
-        }
-        tmpAdjacentSet = tmpAdjacentSet.difference(completeSet);
-        adjacentSet = tmpAdjacentSet;
-        completeSet = completeSet.union(adjacentSet);
-    } while(!adjacentSet.isEmpty())
 
-    return completeSet;
+    const iteration = function iteration() {
+        onEachIteration(adjacentSet.toArray(), color);
+        setTimeout(function() {
+            let tmpAdjacentSet = new IntSet(SQUARE);
+            for (const nextPoint of adjacentSet.toArray()) {
+                for (const adjacentToNextPoint of getSameAdjacentBlocks(inlineToCoords(nextPoint))) {
+                    tmpAdjacentSet.add(coordsToInline(adjacentToNextPoint));
+                }
+            }
+            onCompleteIteration(adjacentSet.toArray(), color);
+            tmpAdjacentSet = tmpAdjacentSet.difference(completeSet);
+            adjacentSet = tmpAdjacentSet;
+            completeSet = completeSet.union(adjacentSet);
+
+
+            if (!adjacentSet.isEmpty()) {
+                iteration();
+            }
+        }, time);
+    };
+    // do {
+    // } while(!adjacentSet.isEmpty())
+    iteration();
+
+    // return completeSet;
 };
 
 window.onload = function onload() {
@@ -108,13 +128,39 @@ window.onload = function onload() {
 
         if (tool === 'fill' && e.target.className === 'block') {
             const canvasChildren = document.getElementById('canvas').children;
-            for (const i of getSameSurroundingBlocks({
-                x: Number(e.target.dataset.x),
-                y: Number(e.target.dataset.y)
-            }).toArray()) {
-                canvasChildren[i].style.background = lastColor;
-                setBlock(inlineToCoords(i), lastColor);
-            }
+            getSameSurroundingBlocks(
+                function onIteration(is, color) {
+                    for (const i of is) {
+                        canvasChildren[i].style.background = color;
+                    }
+                    let blocks = [];
+                    for (const block of document.querySelectorAll('#canvas > div')) {
+                        blocks.push(block.style.background);
+                    }
+                    storage.canvas.set(blocks);
+                },
+                function onEndIteration(is, color) {
+                    for (const i of is) {
+                        setBlock(inlineToCoords(i), color);
+                    }
+                },
+                200,
+                {
+                    x: Number(e.target.dataset.x),
+                    y: Number(e.target.dataset.y)
+                },
+                lastColor
+            );
+            // canvasChildren[i].style.background = lastColor;
+            // getSameSurroundingBlocks(function(is) {
+            //     for (const i of is) {
+            //         canvasChildren[i].style.background = lastColor;
+            //         setBlock(inlineToCoords(i), lastColor);
+            //     }
+            // }, {
+            //     x: Number(e.target.dataset.x),
+            //     y: Number(e.target.dataset.y)
+            // });
         }
     });
     document.addEventListener('mouseup', function(e) {
@@ -122,11 +168,11 @@ window.onload = function onload() {
         e.preventDefault();
 
         // save state of canvas to local storage
-        let blocks = [];
-        for (const block of document.querySelectorAll('#canvas > div')) {
-            blocks.push(block.style.background);
-        }
-        storage.canvas.set(blocks);
+        // let blocks = [];
+        // for (const block of document.querySelectorAll('#canvas > div')) {
+        //     blocks.push(block.style.background);
+        // }
+        // storage.canvas.set(blocks);
     });
 
     const canvas = document.getElementById('canvas');
