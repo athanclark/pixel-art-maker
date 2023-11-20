@@ -1,4 +1,4 @@
-const SIDE = 70;
+const SIDE = 50;
 const SQUARE = SIDE * SIDE;
 
 const storage = {
