@@ -1,4 +1,4 @@
-const SIDE = 20;
+const SIDE = 30;
 const SQUARE = SIDE * SIDE;
 
 const storage = {
@@ -56,7 +56,6 @@ function getSameAdjacentBlocks(point) {
     return adjacentBlocks(point).filter((p) => getBlock(p) === getBlock(point));
 }
 
-// {x, y} -> IntSet
 const getSameSurroundingBlocks = function getSameSurroundingBlocks(
     onEachIteration,
     onCompleteIteration,
@@ -75,7 +74,8 @@ const getSameSurroundingBlocks = function getSameSurroundingBlocks(
         setTimeout(function() {
             let tmpAdjacentSet = new IntSet(SQUARE);
             for (const nextPoint of adjacentSet.toArray()) {
-                for (const adjacentToNextPoint of getSameAdjacentBlocks(inlineToCoords(nextPoint))) {
+                for (const adjacentToNextPoint
+                     of getSameAdjacentBlocks(inlineToCoords(nextPoint))) {
                     tmpAdjacentSet.add(coordsToInline(adjacentToNextPoint));
                 }
             }
@@ -90,11 +90,7 @@ const getSameSurroundingBlocks = function getSameSurroundingBlocks(
             }
         }, time);
     };
-    // do {
-    // } while(!adjacentSet.isEmpty())
     iteration();
-
-    // return completeSet;
 };
 
 window.onload = function onload() {
@@ -133,6 +129,7 @@ window.onload = function onload() {
                     for (const i of is) {
                         canvasChildren[i].style.background = color;
                     }
+                    // save state of canvas to local storage
                     let blocks = [];
                     for (const block of document.querySelectorAll('#canvas > div')) {
                         blocks.push(block.style.background);
@@ -151,28 +148,11 @@ window.onload = function onload() {
                 },
                 lastColor
             );
-            // canvasChildren[i].style.background = lastColor;
-            // getSameSurroundingBlocks(function(is) {
-            //     for (const i of is) {
-            //         canvasChildren[i].style.background = lastColor;
-            //         setBlock(inlineToCoords(i), lastColor);
-            //     }
-            // }, {
-            //     x: Number(e.target.dataset.x),
-            //     y: Number(e.target.dataset.y)
-            // });
         }
     });
     document.addEventListener('mouseup', function(e) {
         clicking = false;
         e.preventDefault();
-
-        // save state of canvas to local storage
-        // let blocks = [];
-        // for (const block of document.querySelectorAll('#canvas > div')) {
-        //     blocks.push(block.style.background);
-        // }
-        // storage.canvas.set(blocks);
     });
 
     const canvas = document.getElementById('canvas');
